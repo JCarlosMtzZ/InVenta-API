@@ -1,7 +1,8 @@
-const db = require('./config/db.js');
+const express = require('express');
+const sequelize = require('./config/db.js');
 
-db.query('SELECT NOW()', (err, res) => {
-    if (err) console.error('Error');
-    else console.log('Query result: ', res.rows[0]);
-    db.end();
-});
+const app = express();
+
+app.use(express.json());
+
+sequelize.authenticate();
