@@ -1,6 +1,7 @@
 import { DataTypes } from 'sequelize';
 import { sequelize } from '../config/db.js';
 import { Image } from './Image.js';
+import { OrderItem } from './OrderItem.js';
 
 export const Product = sequelize.define('Product', {
     id: {
@@ -47,10 +48,12 @@ Image.belongsTo(Product, {
     targetKey: 'id'
 });
 
-sequelize.sync()
-    .then(() => {
-        console.log('Database & tables created!');
-    })
-    .catch((error) => {
-        console.error('Error creating database & tables:', error);
-    });
+Product.hasMany(OrderItem, {
+    foreignKey: 'productId',
+    sourceKey: 'id'
+});
+
+OrderItem.belongsTo(Product, {
+    foreignKey: 'productId',
+    targetKey: 'id'
+});
