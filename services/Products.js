@@ -35,18 +35,14 @@ export const addProduct = async (body) => {
     return newProduct;
 };
 
-export const updateProduct = async (req) => {
-    const id = req.params.id;
-    const product = await Product.findByPk(id);
-    product.set(req.body);
+export const updateProduct = async (product, body) => {
+    product.set(body);
     await product.save();
     return product;
 };
 
 export const deleteProduct = async (id) => {
-    const success = await Product.destroy({
+    await Product.destroy({
         where: { id }
     });
-    if (success) return true;
-    return false;
 };
