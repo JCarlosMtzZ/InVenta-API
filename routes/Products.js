@@ -1,11 +1,12 @@
 import express from 'express';
 import ProductsController from '../controllers/Products.js';
-import { validateProduct, validateProductId } from '../middleware/validators/ProductsValidators.js';
+import { validateProduct } from '../middleware/validators/ProductsValidators.js';
+import { validateId } from '../middleware/validators/Common.js';
 
 export const productsRouter = express.Router();
 
 productsRouter.get('/', ProductsController.getProducts);
-productsRouter.get('/:id', validateProductId, ProductsController.getProductById);
+productsRouter.get('/:id', validateId, ProductsController.getProductById);
 productsRouter.post('/', validateProduct, ProductsController.addProduct);
-productsRouter.put('/:id', validateProductId, ProductsController.updateProduct);
-productsRouter.delete('/:id', validateProductId, ProductsController.deleteProduct);
+productsRouter.put('/:id', validateId, ProductsController.updateProduct);
+productsRouter.delete('/:id', validateId, ProductsController.deleteProduct);
