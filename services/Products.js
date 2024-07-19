@@ -1,5 +1,9 @@
 import { v4 as uuidv4 } from 'uuid';
+import { Op } from 'sequelize';
 import { Product } from '../models/Product.js';
+import { Image } from '../models/Image.js';
+import { Discount } from '../models/Discount.js';
+import { ProductDiscounts } from '../models/ProductDiscounts.js';
 
 export const getProducts = async () => {
     const products = await Product.findAll();
@@ -45,4 +49,24 @@ export const deleteProduct = async (id) => {
     await Product.destroy({
         where: { id }
     });
+};
+
+export const getProductsImagesDiscounts = async () => {
+    const products = await Product.findAll({
+        include: [{
+            model: Image,
+            required: true,
+            attributes: { exclude: ['productId'] }
+        },
+        {
+            model: Discount,
+            through: { model: ProductDiscounts },
+            required: false,
+            where: {
+                startDate: { [Op.lte]: new Date() },
+                endDate: { [Op.gte]: new Date() }
+            }
+        }]
+    });
+    return products;
 };
