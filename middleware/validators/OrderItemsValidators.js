@@ -1,7 +1,5 @@
-import {
-    body,
-    validationResult
-} from 'express-validator';
+import { body } from 'express-validator';
+import { getValidationResults } from './Common.js';
 
 export const validateOrderItem = [
     body('quantity')
@@ -13,11 +11,21 @@ export const validateOrderItem = [
     body('productId')
         .notEmpty().withMessage('Product Id is required')
         .isUUID().withMessage('Invalid UUID format'),
-    (req, res, next) => {
-        const errors = validationResult(req);
-        if(!errors.isEmpty()) {
-            return res.status(400).json({ errors: errors.array() });
-        }
-        next();
-    }
+    getValidationResults
+];
+
+export const validateOrderItemUpdate = [
+    body('quantity')
+        .optional()
+        .notEmpty().withMessage('Quantity is required')
+        .isInt({ gt: 0 }).withMessage('Quantity must be greater than 0'),
+    body('orderId')
+        .optional()
+        .notEmpty().withMessage('Order Id is required')
+        .isUUID().withMessage('Invalid UUID format'),
+    body('productId')
+        .optional()
+        .notEmpty().withMessage('Product Id is required')
+        .isUUID().withMessage('Invalid UUID format'),
+    getValidationResults
 ];

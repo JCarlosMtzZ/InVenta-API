@@ -1,7 +1,5 @@
-import {
-    body,
-    validationResult
-} from 'express-validator';
+import { body } from 'express-validator';
+import { getValidationResults } from './Common.js';
 
 export const validateOrder = [
     body('date')
@@ -10,11 +8,17 @@ export const validateOrder = [
     body('adminId')
         .notEmpty().withMessage('Admin Id is required')
         .isUUID().withMessage('Invalid UUID format'),
-    (req, res, next) => {
-        const errors = validationResult(req);
-        if(!errors.isEmpty()) {
-            return res.status(400).json({ errors: errors.array() });
-        }
-        next();
-    }
+    getValidationResults
+];
+
+export const validateOrderUpdate = [
+    body('date')
+        .optional()
+        .notEmpty().withMessage('Date is required')
+        .isISO8601({ strict: true }).withMessage('Invalid Date format'),
+    body('adminId')
+        .optional()
+        .notEmpty().withMessage('Admin Id is required')
+        .isUUID().withMessage('Invalid UUID format'),
+    getValidationResults
 ];

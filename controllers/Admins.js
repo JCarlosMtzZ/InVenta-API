@@ -43,8 +43,9 @@ export default {
             const admin = await getAdminById(req.params.id);
             if (!admin)
                 return res.status(404).json({ "message": "Admin not found" });
-            const updatedAdmin = await updateAdmin(admin, req.body);
-            return res.status(202).json(updatedAdmin);
+            await updateAdmin(admin, req.body);
+            const { password, ...newAdmin } = admin.toJSON();
+            return res.status(202).json(newAdmin);
         } catch (err) {
             console.error(`Error while adding Admin: ${err}`);
             return res.status(500).json({"message": `Error while updating Admin. Err: ${err}`});

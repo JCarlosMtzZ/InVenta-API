@@ -1,6 +1,7 @@
 import { DataTypes } from 'sequelize';
 import { sequelize } from '../config/db.js';
 import { Order } from './Order.js';
+import bcrypt from 'bcrypt';
 
 export const Admin = sequelize.define('Admin', {
     id: {
@@ -26,6 +27,18 @@ export const Admin = sequelize.define('Admin', {
     }
 }, {
     timestamps: false
+});
+
+Admin.beforeCreate(async (admin, options) => {
+    const salt = await bcrypt.genSalt();
+    admin.password = await bcrypt.hash(admin.password, salt);
+});
+
+Admin.beforeUpdate(async (admin, options) => {
+    if (admin.password) {
+        const salt = await bcrypt.genSalt();
+        admin.password = await bcrypt.hash(admin.password, salt);
+    }
 });
 
 Admin.hasMany(Order, {

@@ -1,7 +1,5 @@
-import {
-    body,
-    validationResult
-} from 'express-validator';
+import { body } from 'express-validator';
+import { getValidationResults } from './Common.js';
 
 export const validateImage = [
     body('url')
@@ -9,11 +7,16 @@ export const validateImage = [
     body('productId')
         .notEmpty().withMessage('Product Id is required')
         .isUUID().withMessage('Invalid UUID format'),
-    (req, res, next) => {
-        const errors = validationResult(req);
-        if(!errors.isEmpty()) {
-            return res.status(400).json({ errors: errors.array() });
-        }
-        next();
-    }
+    getValidationResults
+];
+
+export const validateImageUpdate = [
+    body('url')
+        .optional()
+        .notEmpty().withMessage('URL is required'),
+    body('productId')
+        .optional()
+        .notEmpty().withMessage('Product Id is required')
+        .isUUID().withMessage('Invalid UUID format'),
+    getValidationResults
 ];
