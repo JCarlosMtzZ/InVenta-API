@@ -17,6 +17,7 @@ export const Admin = sequelize.define('Admin', {
     },
     email: {
         type: DataTypes.STRING(50),
+        unique: true,
         allowNull: false
     },
     password: {

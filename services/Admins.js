@@ -2,12 +2,17 @@ import { v4 as uuidv4 } from 'uuid';
 import { Admin } from '../models/Admin.js';
 
 export const getAdmins = async () => {
-    const admins = await Admin.findAll();
+    const admins = await Admin.findAll({
+        attributes: { exclude: ['password'] }
+    }
+    );
     return admins;
 };
 
 export const getAdminById = async (id) => {
-    const admin = await Admin.findByPk(id);
+    const admin = await Admin.findByPk(id, {
+        attributes: { exclude: ['password'] }
+    });
     return admin;
 };
 
