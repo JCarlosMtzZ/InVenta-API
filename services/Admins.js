@@ -16,6 +16,13 @@ export const getAdminById = async (id) => {
     return admin;
 };
 
+export const getAdminByEmail = async (email) => {
+    const admin = await Admin.findOne({
+        where: { email: email }
+    });
+    return admin;
+};
+
 export const addAdmin = async (body) => {
     const id = uuidv4();
     const {

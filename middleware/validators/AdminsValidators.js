@@ -19,6 +19,14 @@ export const validateAdmin = [
     getValidationResults
 ];
 
+export const validateAdminCredentials = [
+    body('email')
+        .notEmpty().withMessage('Email is required'),
+    body('password')
+        .notEmpty().withMessage('Password is required'),
+    getValidationResults
+];
+
 export const validateAdminUpdate = [
     body('firstName')
         .optional()
