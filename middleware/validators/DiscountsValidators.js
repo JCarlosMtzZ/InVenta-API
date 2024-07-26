@@ -45,11 +45,5 @@ export const validateDiscountUpdate = [
     body('amount')
         .optional()
         .isFloat({ gt: 0 }).withMessage('Amount must be greater than 0'),
-    body().custom((req) => {
-        if (!req.percentage && !req.amount) {
-            throw new Error('Either Percentage or Amount must be provided');
-        }
-        return true;
-    }),
     getValidationResults
 ];

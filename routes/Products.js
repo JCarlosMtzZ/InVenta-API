@@ -12,3 +12,4 @@ productsRouter.put('/:id', [validateId, validateProductUpdate], ProductsControll
 productsRouter.delete('/:id', validateId, ProductsController.deleteProduct);
 
 productsRouter.get('/images/discounts', ProductsController.getProductsImagesDiscounts);
+productsRouter.get('/images/discounts/:id', validateId, ProductsController.getProductImagesDiscountsById);

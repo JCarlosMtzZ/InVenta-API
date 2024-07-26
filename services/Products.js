@@ -70,3 +70,24 @@ export const getProductsImagesDiscounts = async () => {
     });
     return products;
 };
+
+export const getProductImagesDiscountsById = async (id) => {
+    const products = await Product.findOne({
+        where: { id: id },
+        include: [{
+            model: Image,
+            required: true,
+            attributes: { exclude: ['productId'] }
+        },
+        {
+            model: Discount,
+            through: { model: ProductDiscounts },
+            required: false,
+            where: {
+                startDate: { [Op.lte]: new Date() },
+                endDate: { [Op.gte]: new Date() }
+            }
+        }]
+    });
+    return products;
+};
