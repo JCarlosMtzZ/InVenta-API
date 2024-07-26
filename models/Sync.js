@@ -6,6 +6,7 @@ import { Order } from "./Order.js";
 import { OrderItem } from "./OrderItem.js";
 import { Product } from "./Product.js";
 import { ProductDiscounts } from "./ProductDiscounts.js";
+import { Category } from "./Category.js";
 
 export const Sync = sequelize.sync({
      alter: true

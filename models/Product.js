@@ -34,6 +34,10 @@ export const Product = sequelize.define('Product', {
     status: {
         type: DataTypes.BOOLEAN
     },
+    categoryId: {
+        type: DataTypes.UUID,
+        allowNull: false
+    }
 }, {
     timestamps: false
 });
