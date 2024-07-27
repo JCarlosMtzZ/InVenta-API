@@ -11,5 +11,5 @@ productsRouter.post('/', validateProduct, ProductsController.addProduct);
 productsRouter.put('/:id', [validateId, validateProductUpdate], ProductsController.updateProduct);
 productsRouter.delete('/:id', validateId, ProductsController.deleteProduct);
 
-productsRouter.get('/images/discounts', ProductsController.getProductsImagesDiscounts);
-productsRouter.get('/images/discounts/:id', validateId, ProductsController.getProductImagesDiscountsById);
+productsRouter.get('/category/images/discounts', ProductsController.getProductsCategoryImagesDiscounts);
+productsRouter.get('/category/images/discounts/:id', validateId, ProductsController.getProductCategoryImagesDiscountsById);

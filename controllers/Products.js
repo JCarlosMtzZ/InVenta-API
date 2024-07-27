@@ -1,17 +1,24 @@
 import { 
     getProducts,
+    getProductsByNameFilter,
     getProductById,
     addProduct,
     updateProduct,
     deleteProduct,
-    getProductsImagesDiscounts,
-    getProductImagesDiscountsById
+    getProductsCategoryImagesDiscounts,
+    getProductCategoryImagesDiscountsById
 } from "../services/Products.js";
 
 export default {
     getProducts : async (req, res, next) => {
         try {
-            const products = await getProducts();
+            let products = [];
+            const name = req.query.name;
+            if (name) {
+                products = await getProductsByNameFilter(name);
+            } else {
+                products = await getProducts();
+            }
             if (products.length > 0)
                 return res.status(200).json(products);
             return res.status(404).json({ "message": "Products not found" });
@@ -64,9 +71,9 @@ export default {
             return res.status(500).json({"message": `Error while deleting product. Err: ${err}`});
         }
     },
-    getProductsImagesDiscounts : async (req, res, next) => {
+    getProductsCategoryImagesDiscounts : async (req, res, next) => {
         try {
-            const products = await getProductsImagesDiscounts();
+            const products = await getProductsCategoryImagesDiscounts();
             if (products.length > 0)
                 return res.status(200).json(products);
             return res.status(404).json({ "message": "Products not found" });
@@ -75,9 +82,9 @@ export default {
             return res.status(500).json({"message": `Error while getting products. Err: ${err}`});
         }
     },
-    getProductImagesDiscountsById : async (req, res, next) => {
+    getProductCategoryImagesDiscountsById : async (req, res, next) => {
         try {
-            const product = await getProductImagesDiscountsById(req.params.id);
+            const product = await getProductCategoryImagesDiscountsById(req.params.id);
             if (product)
                 return res.status(200).json(product);
             return res.status(404).json({ "message": "Product not found" });

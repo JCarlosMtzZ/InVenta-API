@@ -4,9 +4,23 @@ import { Product } from '../models/Product.js';
 import { Image } from '../models/Image.js';
 import { Discount } from '../models/Discount.js';
 import { ProductDiscounts } from '../models/ProductDiscounts.js';
+import { Category } from '../models/Category.js';
 
 export const getProducts = async () => {
     const products = await Product.findAll();
+    return products;
+};
+
+export const getProductsByNameFilter = async (name) => {
+    const products = await Product.findAll({
+        where: {
+            [Op.or]: [
+                { name: { [Op.iLike]: `%${name}%` } },
+                { description: { [Op.iLike]: `%${name}%` }}
+            ]
+        },
+        limit: 10
+    });
     return products;
 };
 
@@ -51,9 +65,13 @@ export const deleteProduct = async (id) => {
     });
 };
 
-export const getProductsImagesDiscounts = async () => {
+export const getProductsCategoryImagesDiscounts = async () => {
     const products = await Product.findAll({
         include: [{
+            model: Category,
+            required: true
+        },
+        {
             model: Image,
             required: true,
             attributes: { exclude: ['productId'] }
@@ -71,10 +89,14 @@ export const getProductsImagesDiscounts = async () => {
     return products;
 };
 
-export const getProductImagesDiscountsById = async (id) => {
+export const getProductCategoryImagesDiscountsById = async (id) => {
     const products = await Product.findOne({
         where: { id: id },
         include: [{
+            model: Category,
+            required: true
+        },
+        {
             model: Image,
             required: true,
             attributes: { exclude: ['productId'] }
