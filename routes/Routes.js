@@ -7,6 +7,7 @@ import { ordersRouter } from './Orders.js';
 import { productDiscountsRouter } from './ProductDiscounts.js';
 import { productsRouter } from './Products.js';
 import { categoriesRouter } from './Categories.js';
+import { filesRouter } from './Files.js';
 
 export const router = express.Router();
 
@@ -18,3 +19,4 @@ router.use('/orders', ordersRouter);
 router.use('/productDiscounts', productDiscountsRouter);
 router.use('/products', productsRouter);
 router.use('/categories', categoriesRouter);
+router.use('/files', filesRouter);
