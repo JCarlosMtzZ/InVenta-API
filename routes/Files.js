@@ -6,5 +6,6 @@ import { upload } from '../middleware/multer/config.js';
 
 export const filesRouter = express.Router();
 
+filesRouter.get('/:prefix', FilesController.getFilesByPrefix);
 filesRouter.post('/', upload.array('files', 5), handleMulterErrors, validateFiles, FilesController.addProductFiles);
 filesRouter.delete('/:name', FilesController.deleteFile);

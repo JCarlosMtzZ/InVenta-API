@@ -31,14 +31,15 @@ export const getProductById = async (id) => {
 
 export const addProduct = async (body) => {
     const id = uuidv4();
+    const status = true;
     const {
         name,
         unitPrice,
         description,
         size,
         stock,
-        status,
-        brand
+        brand,
+        categoryId
     } = body;
     const newProduct = await Product.create({
         id,
@@ -48,7 +49,9 @@ export const addProduct = async (body) => {
         size,
         stock,
         status,
-        brand
+        brand,
+        categoryId,
+        status
     });
     return newProduct;
 };
