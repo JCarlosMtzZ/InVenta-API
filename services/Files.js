@@ -26,14 +26,17 @@ export const getFilesByPrefix = async (prefix) => {
 };
 
 export const addProductFile = async (file, prefix, suffix) => {
+    const objectName = `${prefix}-${suffix}`;
     const params = {
         namespaceName: namespaceName,
         bucketName: bucketName,
         putObjectBody: file,
-        objectName: `${prefix}-${suffix}`
+        objectName: objectName
     };
     const newFile = await bucketClient.putObject(params);
-    return newFile;
+    if (newFile)
+        return objectName;
+    return null;
 };
 
 export const deleteFile = async (name) => {

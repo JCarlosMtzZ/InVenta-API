@@ -76,7 +76,7 @@ export const getProductsCategoryImagesDiscounts = async () => {
         },
         {
             model: Image,
-            required: true,
+            required: false,
             attributes: { exclude: ['productId'] }
         },
         {
@@ -101,7 +101,7 @@ export const getProductCategoryImagesDiscountsById = async (id) => {
         },
         {
             model: Image,
-            required: true,
+            required: false,
             attributes: { exclude: ['productId'] }
         },
         {

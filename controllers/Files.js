@@ -27,15 +27,17 @@ export default {
         try {
             const currentProductFiles = await getFilesByPrefix(req.body.prefix);
             const currentFilesCount = currentProductFiles.listObjects.objects.length;
+            const uploadedFiles = [];
             for (let i=currentFilesCount+1; i<=req.files.length+currentFilesCount; i++) {
                 const fileStream = fs.createReadStream(req.files[i-currentFilesCount-1].path);
                 const fileExtension = path.extname(req.files[i-currentFilesCount-1].originalname);
                 const newFile = await addProductFile(fileStream, req.body.prefix, i + fileExtension);
                 if (!newFile)
                     throw new Error('Error while uploading files to bucket');
+                uploadedFiles.push(newFile);
             }
             cleanupFiles(req.files);
-            return res.status(201).json({"message": "Files uploaded successfully"});
+            return res.status(201).json(uploadedFiles);
         } catch (err) {
             console.error(`Error while adding File: ${err}`);
             return res.status(500).json({"message": `Error while adding Files. Err: ${err}`});
