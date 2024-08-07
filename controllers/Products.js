@@ -6,6 +6,7 @@ import {
     updateProduct,
     deleteProduct,
     getProductsCategoryImagesDiscounts,
+    getProductsCategoryImagesDiscountsByNameFilter,
     getProductCategoryImagesDiscountsById
 } from "../services/Products.js";
 
@@ -73,7 +74,13 @@ export default {
     },
     getProductsCategoryImagesDiscounts : async (req, res, next) => {
         try {
-            const products = await getProductsCategoryImagesDiscounts();
+            let products = [];
+            const name = req.query.name;
+            if (name) {
+                products = await getProductsCategoryImagesDiscountsByNameFilter(name);
+            } else {
+                products = await getProductsCategoryImagesDiscounts();
+            }
             if (products.length > 0)
                 return res.status(200).json(products);
             return res.status(404).json({ "message": "Products not found" });

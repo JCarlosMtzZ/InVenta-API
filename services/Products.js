@@ -92,6 +92,38 @@ export const getProductsCategoryImagesDiscounts = async () => {
     return products;
 };
 
+export const getProductsCategoryImagesDiscountsByNameFilter = async (name) => {
+    const products = await Product.findAll({
+        where: {
+            [Op.or]: [
+                { name: { [Op.iLike]: `%${name}%` } },
+                { description: { [Op.iLike]: `%${name}%` }}
+            ]
+        },
+        limit: 10,
+        include: [{
+            model: Category,
+            required: true
+        },
+        {
+            model: Image,
+            required: false,
+            attributes: { exclude: ['productId'] }
+        },
+        {
+            model: Discount,
+            through: { model: ProductDiscounts },
+            required: false,
+            where: {
+                startDate: { [Op.lte]: new Date() },
+                endDate: { [Op.gte]: new Date() }
+            }
+        },
+        ]
+    });
+    return products;
+};
+
 export const getProductCategoryImagesDiscountsById = async (id) => {
     const products = await Product.findOne({
         where: { id: id },
@@ -116,3 +148,4 @@ export const getProductCategoryImagesDiscountsById = async (id) => {
     });
     return products;
 };
+
