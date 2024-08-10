@@ -1,8 +1,37 @@
 import { v4 as uuidv4 } from 'uuid';
+import { Op } from 'sequelize';
 import { Discount } from '../models/Discount.js';
 
 export const getDiscounts = async () => {
     const discounts = await Discount.findAll();
+    return discounts;
+};
+
+export const getPreviousDiscounts = async () => {
+    const discounts = await Discount.findAll({
+        where: {
+            endDate: { [Op.lte]: new Date() }
+        }
+    });
+    return discounts;
+};
+
+export const getCurrentDiscounts = async () => {
+    const discounts = await Discount.findAll({
+        where: {
+            startDate: { [Op.lte]: new Date() },
+            endDate: { [Op.gte]: new Date() }
+        }
+    });
+    return discounts;
+};
+
+export const getNextDiscounts = async () => {
+    const discounts = await Discount.findAll({
+        where: {
+            startDate: { [Op.gte]: new Date() }
+        }
+    });
     return discounts;
 };
 

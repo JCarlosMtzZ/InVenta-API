@@ -1,5 +1,8 @@
 import { 
     getDiscounts,
+    getPreviousDiscounts,
+    getCurrentDiscounts,
+    getNextDiscounts,
     getDiscountById,
     addDiscount,
     updateDiscount,
@@ -9,7 +12,16 @@ import {
 export default {
     getDiscounts : async (req, res, next) => {
         try {
-            const discounts = await getDiscounts();
+            let discounts = [];
+            const validity = req.query.validity;
+            if (validity === 'previous')
+                discounts = await getPreviousDiscounts();
+            else if (validity === 'current')
+                discounts = await getCurrentDiscounts();
+            else if (validity === 'next')
+                discounts = await getNextDiscounts();
+            else
+                discounts = await getDiscounts();
             if (discounts.length > 0)
                 return res.status(200).json(discounts);
             return res.status(404).json({ "message": "Discounts not found" });
