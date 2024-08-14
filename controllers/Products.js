@@ -7,6 +7,10 @@ import {
     deleteProduct,
     getProductsCategoryImagesDiscounts,
     getProductsCategoryImagesDiscountsByNameFilter,
+    getProductsCategoryImagesWithDiscounts,
+    getProductsCategoryImagesByNameAndDiscountsFilter,
+    getProductsCategoryImagesDiscountsByCategory,
+    getProductsCategoryImagesDiscountsByNameAndCategoryIdFilter,
     getProductCategoryImagesDiscountsById
 } from "../services/Products.js";
 
@@ -76,8 +80,20 @@ export default {
         try {
             let products = [];
             const name = req.query.name;
-            if (name) {
+            const filter = req.query.filter;
+
+            if (name && filter) {
+                if (filter === 'discounts')
+                    products = await getProductsCategoryImagesByNameAndDiscountsFilter(name);
+                else
+                    products = await getProductsCategoryImagesDiscountsByNameAndCategoryIdFilter(name, filter);
+            } else if (name) {
                 products = await getProductsCategoryImagesDiscountsByNameFilter(name);
+            } else if (filter) {
+                if (filter === 'discounts')
+                    products = await getProductsCategoryImagesWithDiscounts();
+                else
+                    products = await getProductsCategoryImagesDiscountsByCategory(filter);
             } else {
                 products = await getProductsCategoryImagesDiscounts();
             }
