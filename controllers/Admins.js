@@ -110,5 +110,29 @@ export default {
             console.error(`Error while logging Admin: ${err}`);
             return res.status(500).json({"message": `Error while logging Admin. Err: ${err}`});
         }
+    },
+    logoutGet : async (req, res, next) => {
+        try {
+            res.cookie('jwt', '', {
+                maxAge: 1,
+                httpOnly: true
+            });
+            return res.status(200).json({"message": "Admin logged out successfully"});
+        } catch (err) {
+            console.error(`Error while logging Admin out: ${err}`);
+            return res.status(500).json({"message": `Error while logging Admin out. Err: ${err}`});
+        }
+    },
+    checkAdmin : (req, res, next) => {
+        try {
+            const token = req.cookies.jwt;
+            if (!token)
+                return res.status(401).json({"message": "Token not provided"});
+            const verification = jsonwebtoken.verify(token, 'temporary secret');
+            return res.status(200).json({adminId: verification.id});
+        } catch (err) {
+            console.error(`Error while checking Admin: ${err}`);
+            return res.status(500).json({"message": `Error while checking Admin. Err: ${err}`});
+        }
     }
 };
