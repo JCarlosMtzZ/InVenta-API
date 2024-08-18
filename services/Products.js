@@ -1,10 +1,13 @@
 import { v4 as uuidv4 } from 'uuid';
-import { Op } from 'sequelize';
+import { Op, fn, col, literal, QueryTypes } from 'sequelize';
+import { sequelize } from '../config/db.js';
 import { Product } from '../models/Product.js';
 import { Image } from '../models/Image.js';
 import { Discount } from '../models/Discount.js';
 import { ProductDiscounts } from '../models/ProductDiscounts.js';
 import { Category } from '../models/Category.js';
+import { Order } from '../models/Order.js';
+import { OrderItem } from '../models/OrderItem.js';
 
 export const getProducts = async () => {
     const products = await Product.findAll();
@@ -278,6 +281,43 @@ export const getProductCategoryImagesDiscountsById = async (id) => {
             }
         }]
     });
+    return products;
+};
+
+export const getTopProductsByDateRange = async (limit, order, startDate, endDate) => {
+    const products = await Order.findAll({
+        attributes: [
+            [col('OrderItems.Product.id'), 'productId'],
+            [col('OrderItems.Product.name'), 'productName'],
+            [literal('CAST(SUM("OrderItems"."quantity") AS INTEGER)'), 'totalUnits'],
+            [literal('CAST(ROUND(CAST(SUM("OrderItems"."unitPrice") AS NUMERIC), 2) AS FLOAT)'), 'subtotal'],
+            [literal('CAST(ROUND(CAST(SUM("OrderItems"."netUnitPrice") AS NUMERIC), 2) AS FLOAT)'), 'total']
+        ],
+        include: [{
+            model: OrderItem,
+            attributes: [],
+            include: [{
+                model: Product,
+                attributes: [],
+                required: true
+            }],
+        }],
+        group: [
+            'OrderItems.Product.id', 'OrderItems.Product.name'
+        ],
+        order: [
+            [literal('CAST(SUM("OrderItems"."quantity") AS INTEGER)'), order],
+        ],
+        where: {
+            date: {
+                [Op.gte]: startDate,
+                [Op.lte]: endDate
+            }
+        },
+        raw: true
+    });
+    if (products && products.length >= limit)
+        return products.slice(0, limit);
     return products;
 };
 

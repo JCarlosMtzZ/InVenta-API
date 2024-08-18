@@ -6,6 +6,9 @@ import { validateId } from '../middleware/validators/Common.js';
 export const productsRouter = express.Router();
 
 productsRouter.get('/', ProductsController.getProducts);
+
+productsRouter.get('/top', ProductsController.getTopProductsByDateRange);
+
 productsRouter.get('/:id', validateId, ProductsController.getProductById);
 productsRouter.post('/', validateProduct, ProductsController.addProduct);
 productsRouter.put('/:id', [validateId, validateProductUpdate], ProductsController.updateProduct);

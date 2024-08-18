@@ -6,6 +6,9 @@ import { validateId } from '../middleware/validators/Common.js';
 export const categoriesRouter = express.Router();
 
 categoriesRouter.get('/', CategoriesController.getCategories);
+
+categoriesRouter.get('/summaries', CategoriesController.getCategoriesSummariesByDateRange);
+
 categoriesRouter.get('/:id', validateId, CategoriesController.getCategoryById);
 categoriesRouter.post('/', validateCategory, CategoriesController.addCategory);
 categoriesRouter.put('/:id', [validateId, validateCategoryUpdate], CategoriesController.updateCategory);

@@ -3,7 +3,8 @@ import {
     getCategoryById,
     addCategory,
     updateCategory,
-    deleteCategory
+    deleteCategory,
+    getCategoriesSummariesByDateRange
 } from "../services/Categories.js";
 
 export default {
@@ -14,7 +15,7 @@ export default {
                 return res.status(200).json(categories);
             return res.status(404).json({ "message": "Categories not found" });
         } catch (err) {
-            console.error(`Error while getting Categorys: ${err}`);
+            console.error(`Error while getting Categories: ${err}`);
             return res.status(500).json({"message": `Error while getting Categories. Err: ${err}`});
         }
     },
@@ -61,5 +62,25 @@ export default {
             console.error(`Error while deleting Category: ${err}`);
             return res.status(500).json({"message": `Error while deleting Category. Err: ${err}`});
         }
-    }
+    },
+    getCategoriesSummariesByDateRange : async (req, res, next) => {
+        try {
+            let startDate = req.query.startdate;
+            let endDate = req.query.enddate;
+
+            if (!startDate)
+                startDate = new Date(0);
+            if (!endDate)
+                endDate = new Date();
+
+            const summaries = await getCategoriesSummariesByDateRange(new Date(startDate), new Date(endDate));
+
+            if (summaries.length > 0)
+                return res.status(200).json(summaries);
+            return res.status(404).json({ "message": "Categories summaries not found" });
+        } catch (err) {
+            console.error(`Error while getting Categories summaries: ${err}`);
+            return res.status(500).json({"message": `Error while getting Categories summaries. Err: ${err}`});
+        }
+    },
 };

@@ -10,6 +10,14 @@ export const OrderItem = sequelize.define('OrderItem', {
         type: DataTypes.INTEGER,
         allowNull: false
     },
+    unitPrice: {
+        type: DataTypes.FLOAT,
+        allowNull: false
+    },
+    netUnitPrice: {
+        type: DataTypes.FLOAT,
+        allowNull: false
+    },
     orderId: {
         type: DataTypes.UUID,
         allowNull: false
