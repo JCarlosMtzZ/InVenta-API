@@ -45,8 +45,8 @@ export const getCategoriesSummariesByDateRange = async (startDate, endDate) => {
             [col('OrderItems.Product.Category.id'), 'categoryId'],
             [col('OrderItems.Product.Category.name'), 'categoryName'],
             [literal('CAST(SUM("OrderItems"."quantity") AS INTEGER)'), 'totalUnits'],
-            [literal('CAST(ROUND(CAST(SUM("OrderItems"."unitPrice") AS NUMERIC), 2) AS FLOAT)'), 'subtotal'],
-            [literal('CAST(ROUND(CAST(SUM("OrderItems"."netUnitPrice") AS NUMERIC), 2) AS FLOAT)'), 'total']
+            [literal('CAST(ROUND(CAST(SUM("OrderItems"."unitPrice" * "OrderItems"."quantity") AS NUMERIC), 2) AS FLOAT)'), 'subtotal'],
+            [literal('CAST(ROUND(CAST(SUM("OrderItems"."netUnitPrice" * "OrderItems"."quantity") AS NUMERIC), 2) AS FLOAT)'), 'total']
         ],
         include: [{
             model: OrderItem,

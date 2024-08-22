@@ -1,14 +1,17 @@
-import { QueryTypes } from 'sequelize';
+import { QueryTypes, literal, col } from 'sequelize';
 import { sequelize } from '../config/db.js';
 import moment from 'moment';
 import { v4 as uuidv4 } from 'uuid';
 import { Admin } from '../models/Admin.js';
+import { Order } from '../models/Order.js';
+import { OrderItem } from '../models/OrderItem.js';
+
+import { getOrdersMinDate, getOrdersMaxDate } from './Common.js';
 
 export const getAdmins = async () => {
     const admins = await Admin.findAll({
         attributes: { exclude: ['password'] }
-    }
-    );
+    });
     return admins;
 };
 
@@ -56,26 +59,30 @@ export const deleteAdmin = async (id) => {
     });
 };
 
-const getOrdersMinDate = async () => {
-    const dateRange = await sequelize.query(`
-        SELECT
-            MIN(DATE_TRUNC('month', "o"."date")) as startdate
-        FROM "Orders" as "o"
-        `, {
-            type: QueryTypes.SELECT
+export const getAdminsSummariesByDateRange = async (sDate, eDate) => {
+    const summaries = await Order.findAll({
+        attributes: [
+            [col('Admin.id'), 'adminId'],
+            [literal(`"Admin"."firstName" || ' ' || "Admin"."lastName"`), 'adminFullName'],
+            [col('Admin.email'), 'adminEmail'],
+            [literal('CAST(SUM("OrderItems"."quantity") AS INTEGER)'), 'totalUnits'],
+            [literal('CAST(ROUND(CAST(SUM("OrderItems"."unitPrice" * "OrderItems"."quantity") AS NUMERIC), 2) AS FLOAT)'), 'subtotal'],
+            [literal('CAST(ROUND(CAST(SUM("OrderItems"."netUnitPrice" * "OrderItems"."quantity") AS NUMERIC), 2) AS FLOAT)'), 'total']
+        ],
+        include: [{
+            model: Admin,
+            attributes: []
+        }, 
+        {
+            model: OrderItem,
+            attributes: []
+        }],
+        group: [
+            'Admin.id'
+        ],
+        raw:true
     });
-    return dateRange;
-};
-
-const getOrdersMaxDate = async () => {
-    const dateRange = await sequelize.query(`
-        SELECT
-            MAX(DATE_TRUNC('month', "o"."date")) as enddate
-        FROM "Orders" as "o"
-        `, {
-            type: QueryTypes.SELECT
-    });
-    return dateRange;
+    return summaries;
 };
 
 export const getAdminsMonthlySummariesByDateRange = async (sDate, eDate) => {
@@ -126,8 +133,8 @@ export const getAdminsMonthlySummariesByDateRange = async (sDate, eDate) => {
           SELECT 
             DATE_TRUNC('month', "o"."date") + INTERVAL '14 day' as month,
             CAST(SUM("oi"."quantity") as INTEGER)  as "totalUnits",
-            ROUND(CAST(SUM("oi"."unitPrice") as NUMERIC), 2) as "subtotal",
-            ROUND(CAST(SUM("oi"."netUnitPrice") as NUMERIC), 2) as "total",
+            CAST(ROUND(CAST(SUM("oi"."unitPrice" * "oi"."quantity") as NUMERIC), 2) as FLOAT) as "subtotal",
+            CAST(ROUND(CAST(SUM("oi"."netUnitPrice" * "oi"."quantity") as NUMERIC), 2) as FLOAT) as "total",
             CAST(COUNT(DISTINCT "o"."id") as INTEGER) as "orderCount"
           FROM "Orders" AS "o"
           LEFT JOIN "OrderItems" AS "oi" ON "o"."id" = "oi"."orderId"

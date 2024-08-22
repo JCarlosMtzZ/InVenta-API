@@ -49,8 +49,8 @@ export const getOrderItemsSummaryByDateRange = async (startDate, endDate) => {
     const summary = await Order.findAll({
         attributes: [
             [literal('CAST(SUM("OrderItems"."quantity") AS INTEGER)'), 'totalUnits'],
-            [literal('CAST(ROUND(CAST(SUM("OrderItems"."unitPrice") AS NUMERIC), 2) AS FLOAT)'), 'subtotal'],
-            [literal('CAST(ROUND(CAST(SUM("OrderItems"."netUnitPrice") AS NUMERIC), 2) AS FLOAT)'), 'total']
+            [literal('CAST(ROUND(CAST(SUM("OrderItems"."unitPrice" * "OrderItems"."quantity") AS NUMERIC), 2) AS FLOAT)'), 'subtotal'],
+            [literal('CAST(ROUND(CAST(SUM("OrderItems"."netUnitPrice" * "OrderItems"."quantity") AS NUMERIC), 2) AS FLOAT)'), 'total']
         ],
         include: [{
             model: OrderItem,
@@ -70,10 +70,10 @@ export const getOrderItemsSummaryByDateRange = async (startDate, endDate) => {
 export const getOrderItemsMonthlySummariesByDateRange = async (startDate, endDate) => {
     const orders = await Order.findAll({
         attributes: [
-            [literal("DATE_TRUNC('Month', \"date\") + INTERVAL '14 days'"), 'date'],
+            [literal("DATE_TRUNC('Month', \"date\") + INTERVAL '14 days'"), 'month'],
             [literal('CAST(SUM("OrderItems"."quantity") AS INTEGER)'), 'totalUnits'],
-            [literal('CAST(ROUND(CAST(SUM("OrderItems"."unitPrice") AS NUMERIC), 2) AS FLOAT)'), 'subtotal'],
-            [literal('CAST(ROUND(CAST(SUM("OrderItems"."netUnitPrice") AS NUMERIC), 2) AS FLOAT)'), 'total']
+            [literal('CAST(ROUND(CAST(SUM("OrderItems"."unitPrice" * "OrderItems"."quantity") AS NUMERIC), 2) AS FLOAT)'), 'subtotal'],
+            [literal('CAST(ROUND(CAST(SUM("OrderItems"."netUnitPrice" * "OrderItems"."quantity") AS NUMERIC), 2) AS FLOAT)'), 'total']
         ],
         include: [{
             model: OrderItem,

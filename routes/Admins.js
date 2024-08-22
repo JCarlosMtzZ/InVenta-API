@@ -18,6 +18,7 @@ adminsRouter.post('/login', validateAdminCredentials, AdminsController.loginPost
 adminsRouter.get('/logout', AdminsController.logoutGet);
 adminsRouter.get('/check', AdminsController.checkAdmin);
 
+adminsRouter.get('/summaries', AdminsController.getAdminsSummariesByDateRange);
 adminsRouter.get('/monthlySummaries', AdminsController.getAdminsMonthlySummariesByDateRange);
 
 adminsRouter.get('/:id', validateId, AdminsController.getAdminById);

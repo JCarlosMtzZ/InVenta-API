@@ -5,7 +5,8 @@ import {
     updateAdmin,
     deleteAdmin,
     getAdminByEmail,
-    getAdminsMonthlySummariesByDateRange
+    getAdminsMonthlySummariesByDateRange,
+    getAdminsSummariesByDateRange
 } from "../services/Admins.js";
 import jsonwebtoken from "jsonwebtoken";
 import bcrypt from 'bcrypt';
@@ -134,6 +135,21 @@ export default {
         } catch (err) {
             console.error(`Error while checking Admin: ${err}`);
             return res.status(500).json({"message": `Error while checking Admin. Err: ${err}`});
+        }
+    },
+    getAdminsSummariesByDateRange : async (req, res, next) => {
+        try {
+            //let startDate = req.query.startdate;
+            //let endDate = req.query.enddate;
+//
+            //const admins = await getAdminsMonthlySummariesByDateRange(startDate, endDate);
+            const admins = await getAdminsSummariesByDateRange();
+            if (admins.length > 0)
+                return res.status(200).json(admins);
+            return res.status(404).json({ "message": "Admins summaries not found" });
+        } catch (err) {
+            console.error(`Error while getting Admins summaries: ${err}`);
+            return res.status(500).json({"message": `Error while getting Admins summaries. Err: ${err}`});
         }
     },
     getAdminsMonthlySummariesByDateRange : async (req, res, next) => {
