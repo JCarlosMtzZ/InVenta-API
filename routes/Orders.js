@@ -6,6 +6,9 @@ import { validateId } from '../middleware/validators/Common.js';
 export const ordersRouter = express.Router();
 
 ordersRouter.get('/', OrdersController.getOrders);
+
+ordersRouter.get('/dateRange', OrdersController.getOrdersDateRange);
+
 ordersRouter.get('/:id', validateId, OrdersController.getOrderById);
 ordersRouter.post('/', validateOrder, OrdersController.addOrder);
 ordersRouter.put('/:id', [validateId, validateOrderUpdate], OrdersController.updateOrder);

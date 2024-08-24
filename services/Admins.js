@@ -1,4 +1,4 @@
-import { QueryTypes, literal, col } from 'sequelize';
+import { QueryTypes, literal, col, Op } from 'sequelize';
 import { sequelize } from '../config/db.js';
 import moment from 'moment';
 import { v4 as uuidv4 } from 'uuid';
@@ -77,6 +77,12 @@ export const getAdminsSummariesByDateRange = async (sDate, eDate) => {
             model: OrderItem,
             attributes: []
         }],
+        where: {
+            date: {
+                [Op.gte]: sDate,
+                [Op.lte]: eDate
+            }
+        },
         group: [
             'Admin.id'
         ],

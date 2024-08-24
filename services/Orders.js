@@ -1,3 +1,4 @@
+import { fn, col } from 'sequelize';
 import { v4 as uuidv4 } from 'uuid';
 import { Order } from '../models/Order.js';
 
@@ -35,4 +36,15 @@ export const deleteOrder = async (id) => {
     await Order.destroy({
         where: { id }
     });
+};
+
+export const getOrdersDateRange = async () => {
+    const dateRange = Order.findAll({
+        attributes: [
+            [fn('MIN', col('date')), 'minDate'],
+            [fn('MAX', col('date')), 'maxDate'],
+        ]
+
+    });
+    return dateRange;
 };

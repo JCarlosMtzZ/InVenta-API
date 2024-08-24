@@ -3,7 +3,8 @@ import {
     getOrderById,
     addOrder,
     updateOrder,
-    deleteOrder
+    deleteOrder,
+    getOrdersDateRange
 } from "../services/Orders.js";
 
 export default {
@@ -61,5 +62,16 @@ export default {
             console.error(`Error while deleting Order: ${err}`);
             return res.status(500).json({"message": `Error while deleting Order. Err: ${err}`});
         }
-    }
+    },
+    getOrdersDateRange : async (req, res, next) => {
+        try {
+            const dateRange = await getOrdersDateRange();
+            if (dateRange.length > 0)
+                return res.status(200).json(dateRange);
+            return res.status(404).json({ "message": "Date range not found" });
+        } catch (err) {
+            console.error(`Error while getting Date range: ${err}`);
+            return res.status(500).json({"message": `Error while getting Date range. Err: ${err}`});
+        }
+    },
 };

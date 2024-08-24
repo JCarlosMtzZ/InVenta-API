@@ -48,6 +48,7 @@ export const deleteOrderItem = async (id) => {
 export const getOrderItemsSummaryByDateRange = async (startDate, endDate) => {
     const summary = await Order.findAll({
         attributes: [
+            [literal('CAST(COUNT(DISTINCT "OrderItems"."orderId") AS INTEGER)'), 'ordersCount'],
             [literal('CAST(SUM("OrderItems"."quantity") AS INTEGER)'), 'totalUnits'],
             [literal('CAST(ROUND(CAST(SUM("OrderItems"."unitPrice" * "OrderItems"."quantity") AS NUMERIC), 2) AS FLOAT)'), 'subtotal'],
             [literal('CAST(ROUND(CAST(SUM("OrderItems"."netUnitPrice" * "OrderItems"."quantity") AS NUMERIC), 2) AS FLOAT)'), 'total']

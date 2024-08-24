@@ -139,11 +139,15 @@ export default {
     },
     getAdminsSummariesByDateRange : async (req, res, next) => {
         try {
-            //let startDate = req.query.startdate;
-            //let endDate = req.query.enddate;
-//
-            //const admins = await getAdminsMonthlySummariesByDateRange(startDate, endDate);
-            const admins = await getAdminsSummariesByDateRange();
+            let startDate = req.query.startdate;
+            let endDate = req.query.enddate;
+
+            if (!startDate)
+                startDate = new Date(0);
+            if (!endDate)
+                endDate = new Date();
+            
+            const admins = await getAdminsSummariesByDateRange(new Date(startDate), new Date(endDate));
             if (admins.length > 0)
                 return res.status(200).json(admins);
             return res.status(404).json({ "message": "Admins summaries not found" });
