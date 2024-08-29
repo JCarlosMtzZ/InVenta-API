@@ -1,6 +1,5 @@
 import { v4 as uuidv4 } from 'uuid';
-import { Op, fn, col, literal, QueryTypes } from 'sequelize';
-import { sequelize } from '../config/db.js';
+import { Op, col, literal } from 'sequelize';
 import { Product } from '../models/Product.js';
 import { Image } from '../models/Image.js';
 import { Discount } from '../models/Discount.js';
@@ -71,171 +70,31 @@ export const deleteProduct = async (id) => {
     });
 };
 
-export const getProductsCategoryImagesDiscounts = async () => {
-    const products = await Product.findAll({
-        order: [['name', 'ASC']],
-        include: [{
-            model: Category,
-            required: true
-        },
-        {
-            model: Image,
-            required: false,
-            attributes: { exclude: ['productId'] }
-        },
-        {
-            model: Discount,
-            through: { model: ProductDiscounts },
-            required: false,
-            where: {
-                startDate: { [Op.lte]: new Date() },
-                endDate: { [Op.gte]: new Date() }
-            }
-        }]
-    });
-    return products;
+export const getProductsCount = async () => {
+    const count = await Product.count();
+    return count;
 };
 
-export const getProductsCategoryImagesDiscountsByNameFilter = async (name) => {
+export const getProductsCategoryImagesByNameAndFilter = async (limit = 10, offset = 0, name, filter) => {
     const products = await Product.findAll({
-        order: [['name', 'ASC']],
-        where: {
-            [Op.or]: [
-                { name: { [Op.iLike]: `%${name}%` } },
-                { description: { [Op.iLike]: `%${name}%` }}
-            ]
-        },
-        limit: 10,
-        include: [{
-            model: Category,
-            required: true
-        },
-        {
-            model: Image,
-            required: false,
-            attributes: { exclude: ['productId'] }
-        },
-        {
-            model: Discount,
-            through: { model: ProductDiscounts },
-            required: false,
-            where: {
-                startDate: { [Op.lte]: new Date() },
-                endDate: { [Op.gte]: new Date() }
-            }
-        },
-        ]
-    });
-    return products;
-};
-
-export const getProductsCategoryImagesWithDiscounts = async () => {
-    const products = await Product.findAll({
-        order: [['name', 'ASC']],
-        limit: 10,
-        include: [{
-            model: Category,
-            required: true
-        },
-        {
-            model: Image,
-            required: false,
-            attributes: { exclude: ['productId'] }
-        },
-        {
-            model: Discount,
-            through: { model: ProductDiscounts },
-            required: true,
-            where: {
-                startDate: { [Op.lte]: new Date() },
-                endDate: { [Op.gte]: new Date() }
-            }
-        },
-        ]
-    });
-    return products;
-};
-
-export const getProductsCategoryImagesByNameAndDiscountsFilter = async (name) => {
-    const products = await Product.findAll({
-        order: [['name', 'ASC']],
-        where: {
-            [Op.or]: [
-                { name: { [Op.iLike]: `%${name}%` } },
-                { description: { [Op.iLike]: `%${name}%` }}
-            ]
-        },
-        limit: 10,
-        include: [{
-            model: Category,
-            required: true
-        },
-        {
-            model: Image,
-            required: false,
-            attributes: { exclude: ['productId'] }
-        },
-        {
-            model: Discount,
-            through: { model: ProductDiscounts },
-            required: true,
-            where: {
-                startDate: { [Op.lte]: new Date() },
-                endDate: { [Op.gte]: new Date() }
-            }
-        },
-        ]
-    });
-    return products;
-};
-
-export const getProductsCategoryImagesDiscountsByCategory = async (categoryId) => {
-    const products = await Product.findAll({
-        order: [['name', 'ASC']],
-        where: { categoryId: categoryId },
-        limit: 10,
-        include: [{
-            model: Category,
-            required: true
-        },
-        {
-            model: Image,
-            required: false,
-            attributes: { exclude: ['productId'] }
-        },
-        {
-            model: Discount,
-            through: { model: ProductDiscounts },
-            required: false,
-            where: {
-                startDate: { [Op.lte]: new Date() },
-                endDate: { [Op.gte]: new Date() }
-            }
-        },
-        ]
-    });
-    return products;
-};
-
-export const getProductsCategoryImagesDiscountsByNameAndCategoryIdFilter = async (name, categoryId) => {
-    const products = await Product.findAll({
+        limit: limit,
+        offset: offset,
         order: [['name', 'ASC']],
         where: {
             [Op.and]: [
-                {
+                name && {
                     [Op.or]: [
                         { name: { [Op.iLike]: `%${name}%` } },
                         { description: { [Op.iLike]: `%${name}%` }}
                     ]
 
                 },
-                {
-                    categoryId: categoryId
+                filter && filter !== 'discounts' && {
+                    categoryId: filter
                 }
             ]
             
         },
-        limit: 10,
         include: [{
             model: Category,
             required: true
@@ -248,13 +107,12 @@ export const getProductsCategoryImagesDiscountsByNameAndCategoryIdFilter = async
         {
             model: Discount,
             through: { model: ProductDiscounts },
-            required: false,
+            required: filter === 'discounts',
             where: {
                 startDate: { [Op.lte]: new Date() },
                 endDate: { [Op.gte]: new Date() }
             }
-        },
-        ]
+        }]
     });
     return products;
 };

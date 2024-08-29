@@ -44,7 +44,6 @@ export const getOrdersDateRange = async () => {
             [fn('MIN', col('date')), 'minDate'],
             [fn('MAX', col('date')), 'maxDate'],
         ]
-
     });
     return dateRange;
 };

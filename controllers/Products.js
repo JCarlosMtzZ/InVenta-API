@@ -5,14 +5,9 @@ import {
     addProduct,
     updateProduct,
     deleteProduct,
-    getProductsCategoryImagesDiscounts,
-    getProductsCategoryImagesDiscountsByNameFilter,
-    getProductsCategoryImagesWithDiscounts,
-    getProductsCategoryImagesByNameAndDiscountsFilter,
-    getProductsCategoryImagesDiscountsByCategory,
-    getProductsCategoryImagesDiscountsByNameAndCategoryIdFilter,
+    getProductsCategoryImagesByNameAndFilter,
+    getProductsCount,
     getProductCategoryImagesDiscountsById,
-
     getTopProductsByDateRange
 } from "../services/Products.js";
 
@@ -83,24 +78,24 @@ export default {
             let products = [];
             const name = req.query.name;
             const filter = req.query.filter;
+            
+            const page = parseInt(req.query.page, 10) || 1;
+            const pageSize = parseInt(req.query.pageSize, 10) || 15;
+            const offset = (page - 1) * pageSize;
 
-            if (name && filter) {
-                if (filter === 'discounts')
-                    products = await getProductsCategoryImagesByNameAndDiscountsFilter(name);
-                else
-                    products = await getProductsCategoryImagesDiscountsByNameAndCategoryIdFilter(name, filter);
-            } else if (name) {
-                products = await getProductsCategoryImagesDiscountsByNameFilter(name);
-            } else if (filter) {
-                if (filter === 'discounts')
-                    products = await getProductsCategoryImagesWithDiscounts();
-                else
-                    products = await getProductsCategoryImagesDiscountsByCategory(filter);
-            } else {
-                products = await getProductsCategoryImagesDiscounts();
+            products = await getProductsCategoryImagesByNameAndFilter(pageSize, offset, name, filter);
+            
+            if (products.length > 0) {
+                const totalProducts = await getProductsCount();
+                const totalPages = Math.ceil(totalProducts / pageSize);
+                return res.status(200).json({
+                    page: page,
+                    pageSize: pageSize,
+                    totalPages: totalPages,
+                    totalProducts: totalProducts,
+                    products: products,
+                });
             }
-            if (products.length > 0)
-                return res.status(200).json(products);
             return res.status(404).json({ "message": "Products not found" });
         } catch (err) {
             console.error(`Error while getting products: ${err}`);
