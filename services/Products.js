@@ -70,15 +70,12 @@ export const deleteProduct = async (id) => {
     });
 };
 
-export const getProductsCount = async () => {
-    const count = await Product.count();
-    return count;
-};
-
-export const getProductsCategoryImagesByNameAndFilter = async (limit = 10, offset = 0, name, filter) => {
-    const products = await Product.findAll({
-        limit: limit,
-        offset: offset,
+export const getProductsCategoryImagesByNameAndFilter = async (page, limit, name, filter) => {
+    const offset = (page - 1) * limit;
+    
+    const queryObject = {
+        distinct: true,
+        col: 'id',
         order: [['name', 'ASC']],
         where: {
             [Op.and]: [
@@ -113,8 +110,22 @@ export const getProductsCategoryImagesByNameAndFilter = async (limit = 10, offse
                 endDate: { [Op.gte]: new Date() }
             }
         }]
-    });
-    return products;
+    };
+
+    const count = await Product.count(queryObject);
+
+    queryObject.limit = limit;
+    queryObject.offset = offset;
+    
+    const products = await Product.findAll(queryObject);
+    console.log(products)
+    return {
+        page: page,
+        pageSize: limit,
+        totalPages: Math.ceil(count / limit),
+        totalProducts: count,
+        products: products
+    };
 };
 
 export const getProductCategoryImagesDiscountsById = async (id) => {

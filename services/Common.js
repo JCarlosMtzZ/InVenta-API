@@ -4,7 +4,7 @@ import { sequelize } from '../config/db.js';
 export const getOrdersMinDate = async () => {
     const dateRange = await sequelize.query(`
         SELECT
-            MIN(DATE_TRUNC('month', "o"."date")) as startdate
+            MIN("o"."date") as startdate
         FROM "Orders" as "o"
         `, {
             type: QueryTypes.SELECT
@@ -15,7 +15,7 @@ export const getOrdersMinDate = async () => {
 export const getOrdersMaxDate = async () => {
     const dateRange = await sequelize.query(`
         SELECT
-            MAX(DATE_TRUNC('month', "o"."date")) as enddate
+            MAX("o"."date") as enddate
         FROM "Orders" as "o"
         `, {
             type: QueryTypes.SELECT

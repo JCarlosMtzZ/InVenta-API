@@ -133,7 +133,7 @@ export const getAdminsMonthlySummariesByDateRange = async (sDate, eDate) => {
         allMonths.push(currentDate.clone().toISOString());
         currentDate.add(1, 'month').startOf('month').startOf('day').add(14, 'days');
     }
-
+    
     for (let admin of admins) {
         const monthlySummary = await sequelize.query(`
           SELECT 
@@ -144,7 +144,7 @@ export const getAdminsMonthlySummariesByDateRange = async (sDate, eDate) => {
             CAST(COUNT(DISTINCT "o"."id") as INTEGER) as "orderCount"
           FROM "Orders" AS "o"
           LEFT JOIN "OrderItems" AS "oi" ON "o"."id" = "oi"."orderId"
-          WHERE "o"."adminId" = :adminId AND "o"."date" > :startDate AND "o"."date" < :endDate
+          WHERE "o"."adminId" = :adminId AND "o"."date" >= :startDate AND "o"."date" <= :endDate
           GROUP BY DATE_TRUNC('month', "o"."date") + INTERVAL '14 day'
           ORDER BY DATE_TRUNC('month', "o"."date") + INTERVAL '14 day' ASC
         `, {
