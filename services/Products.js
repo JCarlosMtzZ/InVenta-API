@@ -118,7 +118,6 @@ export const getProductsCategoryImagesByNameAndFilter = async (page, limit, name
     queryObject.offset = offset;
     
     const products = await Product.findAll(queryObject);
-    console.log(products)
     return {
         page: page,
         pageSize: limit,
